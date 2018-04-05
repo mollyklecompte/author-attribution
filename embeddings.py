@@ -1,12 +1,17 @@
+"""
+Takes raw tweet text, creates embeddings from character n-grams
+"""
+
+
 import collections
 import csv
 import os
-import json
 
 import tensorflow as tf
 
 
 data_files = [f'tweet_data/{f}' for f in os.listdir('tweet_data/')]
+
 
 def get_tweet_text(file):
     tweets = []
@@ -34,4 +39,4 @@ def tweets_to_ngrams(files: list, n):
         ngrams.extend(tweet_grams)
     return ngrams
 
-vocab_size =
+
