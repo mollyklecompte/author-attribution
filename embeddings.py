@@ -6,9 +6,7 @@ Takes raw tweet text, creates embeddings from character n-grams
 import collections
 import csv
 import os
-import codecs
-import json
-import regex as re
+import re
 from ast import literal_eval
 
 import tensorflow as tf
@@ -32,17 +30,15 @@ def get_tweet_text(file):
 
 # creates character n-grams from string (for single tweet)
 def char_ngrammer(input_str, n):
-    return [input_str[ind:ind+n] for ind in range(len(input_str)-n)]
+    return [input_str[ind:ind+n] for ind in range(len(input_str)-n +1)]
 
 
 # returns list of ngram lists from all tweet text
 def tweets_to_ngrams(files: list, n):
     ngrams = []
     for f in files:
-        tweet_texts = get_tweet_text(f)
-        # creates ngrams for text of DECODED tweet
-        tweet_grams = [literal_eval(t).decode('utf-8') for t in tweet_texts]
+        tweet_texts = get_tweet_text(f)[:4]
+        # creates ngrams for text of DECODED tweet with links removed
+        tweet_grams = [(re.sub(r'https?:\/\/\S*[\r\n]*', '', literal_eval(t).decode('utf-8'), flags=re.MULTILINE)) for t in tweet_texts]
         ngrams.extend(tweet_grams)
-    for n in ngrams:
-        print(n)
     return ngrams
