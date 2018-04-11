@@ -55,17 +55,17 @@ def create_embeddings(ngrams):
     return model
 
 
-# model = create_embeddings(tweets_to_ngrams(data_files, 2))
-# model.save('models/embeddings')
+model = create_embeddings(tweets_to_ngrams(data_files, 2))
+model.save('models/embeddings')
 # print(len(model.wv.vocab))
 # print(list(model.wv.vocab.keys()))
 
-model = gensim.models.Word2Vec.load('models/embeddings')
-embedding_matrix = np.zeros((len(model.wv.vocab), dim_embed))
-for i in range(len(model.wv.vocab)):
-    embedding_vector = model.wv[model.wv.index2word[i]]
-    if embedding_vector is not None:
-        embedding_matrix[i] = embedding_vector
+# model = gensim.models.Word2Vec.load('models/embeddings')
+# embedding_matrix = np.zeros((len(model.wv.vocab), dim_embed))
+# for i in range(len(model.wv.vocab)):
+#     embedding_vector = model.wv[model.wv.index2word[i]]
+#     if embedding_vector is not None:
+#         embedding_matrix[i] = embedding_vector
 
 
 # print(len(model.wv.vocab))
