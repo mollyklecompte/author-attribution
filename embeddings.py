@@ -15,8 +15,8 @@ import tensorflow as tf
 
 
 data_files = [f'tweet_data/{f}' for f in os.listdir('tweet_data/') if f != 'README']
-dim_embed = 300
-input_len = 280
+DIM_EMBED = 300
+INPUT_LEN = 280
 window = 5
 
 # returns list of first 1500 lines of tweet text csv from a file
@@ -35,7 +35,7 @@ def get_tweet_text(file):
 
 # creates character n-grams from string (for single tweet)
 def char_ngrammer(input_str, n):
-    padded_str = input_str+ '\0' * (input_len - len(input_str))
+    padded_str = input_str+ '\0' * (INPUT_LEN - len(input_str))
     return [padded_str[ind:ind+n] for ind in range(len(padded_str)-n +1)]
 
 
@@ -50,7 +50,7 @@ def tweets_to_ngrams(files: list, n):
     return ngrams
 
 def create_embeddings(ngrams):
-    model = gensim.models.Word2Vec(ngrams, size=dim_embed, window=window, min_count=0, iter=10)
+    model = gensim.models.Word2Vec(ngrams, size=DIM_EMBED, window=window, min_count=0, iter=10)
 
     return model
 
@@ -61,7 +61,7 @@ model.save('models/embeddings')
 # print(list(model.wv.vocab.keys()))
 
 # model = gensim.models.Word2Vec.load('models/embeddings')
-# embedding_matrix = np.zeros((len(model.wv.vocab), dim_embed))
+# embedding_matrix = np.zeros((len(model.wv.vocab), DIM_EMBED))
 # for i in range(len(model.wv.vocab)):
 #     embedding_vector = model.wv[model.wv.index2word[i]]
 #     if embedding_vector is not None:
@@ -71,5 +71,5 @@ model.save('models/embeddings')
 # print(len(model.wv.vocab))
 # print(model)
 # vocab_len = model.wv.vocab
-# initializer = np.zeros((vocab_len, dim_embed), dtype=np.float32)
+# initializer = np.zeros((vocab_len, DIM_EMBED), dtype=np.float32)
 
