@@ -8,45 +8,37 @@ import csv
 import os
 import re
 import gensim
-import numpy as np
+import pandas as pd
 from ast import literal_eval
 
-import tensorflow as tf
 
 
 data_files = [f'tweet_data/{f}' for f in os.listdir('tweet_data/') if f != 'README']
 DIM_EMBED = 300
 INPUT_LEN = 280
+NGRAM = 2
 window = 5
 
-# returns list of first 1500 lines of tweet text csv from a file
-def get_tweet_text(file):
-    tweets = []
-    with open(file, newline='') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            if len(tweets) <= 1499:
-                tweets.append(row[0])
-            else:
-                break
 
-    return tweets
 
 
 # creates character n-grams from string (for single tweet)
 def char_ngrammer(input_str, n):
     padded_str = input_str+ '\0' * (INPUT_LEN - len(input_str))
+
     return [padded_str[ind:ind+n] for ind in range(len(padded_str)-n +1)]
 
 
 # returns list of ngram lists from all tweet text
-def tweets_to_ngrams(files: list, n):
+def tweets_to_ngrams(n):
     ngrams = []
-    for f in files:
-        tweet_texts = get_tweet_text(f)
-        # creates ngrams for text of DECODED tweet
-        tweet_grams = [char_ngrammer(re.sub(r'https?:\/\/\S*[\r\n]*', '', literal_eval(t).decode('utf-8'), flags=re.MULTILINE).replace('&amp', '&'), n) for t in tweet_texts]
-        ngrams.extend(tweet_grams)
+    df = pd.read_csv('tweet_data/data_sets/training.csv', sep="\\")
+    tweets = df['Tweet'].tolist()
+    for t in tweets:
+        if type(t) is not str:
+            t = str(t)
+        ngrams.append(char_ngrammer(t, n))
+
     return ngrams
 
 def create_embeddings(ngrams):
@@ -54,9 +46,9 @@ def create_embeddings(ngrams):
 
     return model
 
-
-model = create_embeddings(tweets_to_ngrams(data_files, 2))
+model = create_embeddings(tweets_to_ngrams(NGRAM))
 model.save('models/embeddings')
+
 # print(len(model.wv.vocab))
 # print(list(model.wv.vocab.keys()))
 

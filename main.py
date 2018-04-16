@@ -10,7 +10,7 @@ TARGETS = ['ARR0TT', 'bokwon', 'CAKESDAKILLA', 'chrissyteigen', 'coketweet', 'Do
 
 # load word2vec model and initialize np array with embedding weights for use in tf embedding layer
 model = gensim.models.Word2Vec.load('models/embeddings')
-embedding_matrix = np.zeros((len(model.wv.vocab), DIM_EMBED))
+embedding_matrix = np.zeros((len(model.wv.vocab), DIM_EMBED), dtype=np.float32)
 for i in range(len(model.wv.vocab)):
     embedding_vector = model.wv[model.wv.index2word[i]]
     if embedding_vector is not None:
@@ -34,7 +34,7 @@ sequence_length = INPUT_LEN
 
 pooled_outputs = []
 for i, filter_size in enumerate(filter_sizes):
-    with tf.name_scope("conv-maxpool-%s" % filter_sizes):
+    with tf.name_scope("conv-maxpool"):
 
         #convolution layer
         filter_shape = [filter_size, DIM_EMBED, 1, num_filters]
@@ -64,4 +64,8 @@ for i, filter_size in enumerate(filter_sizes):
     # concat pooled outputs
     num_filters_total = num_filters * len(filter_sizes)
     h_pool = tf.concat(pooled_outputs, 3)
+    print(type(h_pool))
+
+# with tf.name_scope('fully-connected'):
+
 

@@ -1,3 +1,4 @@
 **/.idea/**
-tweet_data/*.csv
+**/tweet_data/tweets/*.csv
+**/tweet_data/data_sets/*.csv
 **/__pycache__/**
