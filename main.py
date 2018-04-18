@@ -54,7 +54,7 @@ for i, filter_size in enumerate(filter_sizes):
             embedded_ngrams_dropped_out,
             W,
             strides=strides,
-            padding="SAME",
+            padding="VALID",
             name="conv"
         )
         # conv = tf.contrib.layers.conv2d(embedding_layer, 1, filter_size, padding='VALID')
@@ -72,10 +72,10 @@ for i, filter_size in enumerate(filter_sizes):
         )
         pooled_outputs.append(pooled)
 
-    # concat pooled outputs
-    num_filters_total = num_filters * len(filter_sizes)
-    h_pool = tf.concat(pooled_outputs, 3)
-    print(type(h_pool))
+# concat pooled outputs
+num_filters_total = num_filters * len(filter_sizes)
+h_pool = tf.concat(pooled_outputs, 3)
+print(type(h_pool))
 
 # with tf.name_scope('fully-connected'):
 
