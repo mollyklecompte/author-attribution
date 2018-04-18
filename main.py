@@ -75,8 +75,19 @@ for i, filter_size in enumerate(filter_sizes):
 # concat pooled outputs
 num_filters_total = num_filters * len(filter_sizes)
 h_pool = tf.concat(pooled_outputs, 3)
-print(type(h_pool))
+print(h_pool.shape)
+h_pool_flat = tf.reshape(h_pool, [-1, num_filters_total])
+print(h_pool_flat.shape)
 
-# with tf.name_scope('fully-connected'):
+with tf.name_scope('fully-connected'):
+    logits = tf.layers.dense(h_pool_flat, NUM_TARGETS, activation=None)
+    predictions_dict = {
+        'source': tf.gather(TARGETS, tf.argmax(logits, 1)),
+        'class': tf.argmax(logits, 1),
+        'prob': tf.nn.softmax(logits)
+    }
+
+print(predictions_dict)
+
 
 
