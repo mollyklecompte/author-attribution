@@ -7,14 +7,43 @@ from embeddings import DIM_EMBED, INPUT_LEN
 
 TARGETS = ['ARR0TT', 'bokwon', 'CAKESDAKILLA', 'chrissyteigen', 'coketweet', 'DoththeDoth', 'efeezyubeezy', 'existentialcoms', 'HE_VALENCIA', 'hrtraulsen', 'janmpdx', 'officialjaden', 'sarahjeong' 'shanley', 'SICKOFWOLVES', 'sideofhail', 'tinynietzsche', 'Tronfucious', 'tylerthecreator']
 NUM_TARGETS = len(TARGETS)
+CSV_COLUMNS = ['Author', 'Tweet']
+LABEL_COLUMN = 'Author'
+BATCH_SIZE = None
 
+filename = 'training.csv'
+
+
+def init(file):
+    def read_dataset(file):
+        filename = f"tweet_data/data_sets/{file}.csv"
+        if file == 'train':
+            mode = tf.contrib.learn.ModeKeys.TRAIN
+            BATCH_SIZE = 750
+        else:
+            mode = tf.contrib.learn.ModeKeys.EVAL
+            BATCH_SIZE = 375
+
+
+        def input_fn():
+            input_file_names = tf.train.match_filenames_once(filename)
+            filename_queue = tf.train.string_input_producer(input_file_names, shuffle=True)
+
+            reader = tf.TextLineReader()
+            _, value = reader.read_up_to(filename_queue, num_records=BATCH_SIZE)
+            if mode == tf.estimator.ModeKeys.TRAIN:
+               value = tf.train.shuffle_batch([value], BATCH_SIZE, capacity=10*batch_size, min_after_dequeue=BATCH_SIZE, enqueue_many=True, allow_smaller_final_batch=False)
+            value_column = tf.expand_dims(value, -1)
+            columns = tf.decode_csv(value_column, record_defaults=DEFAULTS, field_delim='\t')
+            features = dict(zip(CSV_COLUMNS, columns))
+            label = features.pop(LABEL_COLUMN)
 
 # load word2vec model and initialize np array with embedding weights for use in tf embedding layer
-model = gensim.models.Word2Vec.load('models/embeddings')
-VOCAB_SIZE = len(model.wv.vocab)
-embedding_matrix = np.zeros((len(model.wv.vocab), DIM_EMBED), dtype=np.float32)
-for i in range(len(model.wv.vocab)):
-    embedding_vector = model.wv[model.wv.index2word[i]]
+embeddings_model = gensim.models.Word2Vec.load('models/embeddings')
+VOCAB_SIZE = len(embeddings_model.wv.vocab)
+embedding_matrix = np.zeros((len(embeddings_model.wv.vocab), DIM_EMBED), dtype=np.float32)
+for i in range(len(embeddings_model.wv.vocab)):
+    embedding_vector = embeddings_model.wv[embeddings_model.wv.index2word[i]]
     if embedding_vector is not None:
         embedding_matrix[i] = embedding_vector
 
