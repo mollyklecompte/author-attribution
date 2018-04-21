@@ -5,12 +5,9 @@ import pandas as pd
 from ast import literal_eval
 
 DATASET_DIR = 'tweet_data/data_sets'
-TRAINING_DF = None
-EVAL_DF = None
-VALIDATE_DF = None
 
 data_files = [f'tweet_data/tweets/{f}' for f in os.listdir('tweet_data/tweets/') if f != 'README']
-max_tweets = 1500
+MAX_TWEETS = 1500
 
 
 
@@ -50,7 +47,7 @@ def build_datasets(tweet_files):
     for f in tweet_files:
         label = f.replace('_tweets.csv', '')
         label = label.replace('tweet_data/tweets/', '')
-        tweet_texts = get_tweets(f, max_tweets)
+        tweet_texts = get_tweets(f, MAX_TWEETS)
         formatted = [re.sub(r'https?:\/\/\S*[\r\n]*', '', literal_eval(t).decode('utf-8'),
                    flags=re.MULTILINE).replace('&amp', '&') for t in tweet_texts]
         split50 = split_tweets(formatted)
